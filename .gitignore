@@ -1,0 +1,22 @@
+# Visual Studio local cache
+/.vs/
+
+# Build output directories
+/Debug/
+/Release/
+/x64/Debug/
+/x64/Release/
+
+# Editor intermediate directories
+/Editor/Debug/
+/Editor/Release/
+/Editor/x64/Debug/
+/Editor/x64/Release/
+
+# Engine intermediate directories
+/Engine/Debug/
+/Engine/Release/
+/Engine/x64/Debug/
+/Engine/x64/Release/
+/Engine/Engine/x64/Debug/
+/Engine/Engine/x64/Release/

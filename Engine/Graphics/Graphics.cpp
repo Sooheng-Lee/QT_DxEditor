@@ -38,6 +38,21 @@ void Graphics::Render()
 	EndFrame();
 }
 
+void Graphics::CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, const char* version, ComPtr<ID3DBlob> blob)
+{
+	ComPtr<ID3DBlob> errBlob = nullptr;
+	UINT flag = 0;
+#ifdef _DEBUG
+	flag = D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG;
+#endif
+	HRESULT hr = D3DCompileFromFile(hlslPath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, version, flag, D3DCOMPILE_IEEE_STRICTNESS, blob.ReleaseAndGetAddressOf(), errBlob.GetAddressOf());
+	if (errBlob)
+	{
+		OutputDebugStringA(static_cast<const char*>(errBlob->GetBufferPointer()));
+	}
+	CHECK(SUCCEEDED(hr));
+}
+
 void Graphics::BeginFrame()
 {
 	ClearViewports();

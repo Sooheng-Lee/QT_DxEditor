@@ -16,6 +16,13 @@ public:
 	void ClearViewports();
 	void Render();
 
+	void CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, const char* version, ComPtr<ID3DBlob> blob);
+
+public:
+	ComPtr<ID3D11Device> GetDevice() const { return _device; };
+	ComPtr<ID3D11DeviceContext> GetContext() const { return _context; };
+	ComPtr<IDXGISwapChain> GetSwapChain() const { return _swapChain; };
+
 private:
 	void BeginFrame();
 	void EndFrame();

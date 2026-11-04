@@ -31,20 +31,26 @@ bool Engine::InitEngine()
 
 	std::vector<VertexDefault> vertices;
 	std::vector<UINT> indices;
-	BaseShapes::CreateBox(vertices, indices, 0.1f, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+	//BaseShapes::CreateBox(vertices, indices, 0.1f, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+	BaseShapes::CreateSphere(vertices, indices, 1.0f, 20.0f);
 	_vertexShader->CreateVertexBuffer(vertices);
 	_vertexShader->CreateIndexBuffer(indices);
 	_vertexShader->CreateShader(L"D:\\CPP\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
 	_pixelShader->CreateShader(L"D:\\CPP\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
+	_camera = new Camera(90.0f, static_cast<float>(_width) / _height);
 }
 
 void Engine::Update()
 {
 	static TransformData data = {};
 	static XMFLOAT3 position = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	position.x += 0.0001f;
+	static XMFLOAT3 rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	rotation = XMFLOAT3(rotation.x + 0.0001f, 0.0f, 0.0f);
+	_camera->SetRotation(rotation);
 	data.world = XMMatrixTranslation(position.x, position.y, position.z);
 	data.world = XMMatrixTranspose(data.world);
+	data.view = _camera->GetViewMat();
+	data.proj = _camera->GetProjMat();
 	_constantBuffer->Update(data);
 }
 

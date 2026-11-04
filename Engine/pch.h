@@ -16,3 +16,4 @@ using namespace Microsoft::WRL;
 #include "Graphics/Graphics.h"
 #include "Graphics/Shaders.h"
 #include "Graphics/ConstantBuffer.h"
+#include "Components/Camera.h"

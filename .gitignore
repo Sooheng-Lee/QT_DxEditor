@@ -2,6 +2,7 @@
 /.vs/
 
 # Build output directories
+bin/
 /Debug/
 /Release/
 /x64/Debug/

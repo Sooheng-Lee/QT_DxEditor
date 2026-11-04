@@ -16,5 +16,7 @@ private:
 	HWND _handle = nullptr;
 	UINT _width = 0;
 	UINT _height = 0;
+	VertexShader<VertexDefault>* _vertexShader;
+	PixelShader* _pixelShader;
 };
 

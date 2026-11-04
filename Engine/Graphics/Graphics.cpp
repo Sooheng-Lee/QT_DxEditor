@@ -34,11 +34,16 @@ void Graphics::ClearViewports()
 
 void Graphics::Render()
 {
-	BeginFrame();
-	EndFrame();
+	ClearViewports();
+	_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Graphics::CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, const char* version, ComPtr<ID3DBlob> blob)
+void Graphics::SwapBuffers()
+{
+	_swapChain->Present(0, 0);
+}
+
+void Graphics::CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, const char* version, ComPtr<ID3DBlob>& blob)
 {
 	ComPtr<ID3DBlob> errBlob = nullptr;
 	UINT flag = 0;
@@ -51,17 +56,6 @@ void Graphics::CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, 
 		OutputDebugStringA(static_cast<const char*>(errBlob->GetBufferPointer()));
 	}
 	CHECK(SUCCEEDED(hr));
-}
-
-void Graphics::BeginFrame()
-{
-	ClearViewports();
-	_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-}
-
-void Graphics::EndFrame()
-{
-	_swapChain->Present(0, 0);
 }
 
 void Graphics::CreateDeviceAndSwapChain(const HWND& handle, const UINT& width, const UINT& height)

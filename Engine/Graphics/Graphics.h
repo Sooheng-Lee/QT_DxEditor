@@ -15,8 +15,8 @@ public:
 	void Init(const HWND& handle, const UINT& width, const UINT& height);
 	void ClearViewports();
 	void Render();
-
-	void CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, const char* version, ComPtr<ID3DBlob> blob);
+	void SwapBuffers();
+	void CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, const char* version, ComPtr<ID3DBlob>& blob);
 
 public:
 	ComPtr<ID3D11Device> GetDevice() const { return _device; };
@@ -25,7 +25,6 @@ public:
 
 private:
 	void BeginFrame();
-	void EndFrame();
 	void CreateDeviceAndSwapChain(const HWND& handle, const UINT& width, const UINT& height);
 	void CreateDSV(const UINT& width, const UINT& height);
 	void CreateRTV();

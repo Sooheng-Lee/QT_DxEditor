@@ -10,5 +10,7 @@
 
 using namespace Microsoft::WRL;
 #define CHECK(hr) assert(SUCCEEDED(hr))
-
+#include "VertexTypes.h"
+#include "Graphics/BaseShapes.h"
 #include "Graphics/Graphics.h"
+#include "Graphics/Shaders.h"

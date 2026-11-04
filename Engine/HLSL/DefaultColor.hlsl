@@ -1,3 +1,10 @@
+cbuffer cbTransformData : register(b0)
+{
+    float4x4 world;
+    float4x4 view;
+    float4x4 proj;
+};
+
 struct VertexIn
 {
     float3 position : POSITION;
@@ -17,7 +24,7 @@ struct VertexOut
 VertexOut VS(VertexIn input)
 {
     VertexOut output;
-    output.position = float4(input.position, 1);
+    output.position = mul(float4(input.position, 1), world);
     output.normal = input.normal;
     output.uv = input.uv;
     output.color = input.color;

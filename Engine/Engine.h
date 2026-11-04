@@ -18,5 +18,6 @@ private:
 	UINT _height = 0;
 	VertexShader<VertexDefault>* _vertexShader;
 	PixelShader* _pixelShader;
+	ConstantBuffer<TransformData>* _constantBuffer;
 };
 

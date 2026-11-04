@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 	while (window.isVisible())
 	{
 		QApplication::processEvents();
+		engine.Update();
 		engine.Render();
 	}
 

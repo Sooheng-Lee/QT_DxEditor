@@ -26,17 +26,26 @@ bool Engine::InitEngine()
 	Graphics::GetInstance()->Init(_handle, _width, _height);
 	_vertexShader = new VertexShader<VertexDefault>();
 	_pixelShader = new PixelShader();
+	_constantBuffer = new ConstantBuffer<TransformData>();
+	_constantBuffer->CreateConstantBuffer(ERenderType::RT_VERTEX, 0);
+
 	std::vector<VertexDefault> vertices;
 	std::vector<UINT> indices;
 	BaseShapes::CreateBox(vertices, indices, 0.1f, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 	_vertexShader->CreateVertexBuffer(vertices);
 	_vertexShader->CreateIndexBuffer(indices);
-	_vertexShader->CreateShader(L"C:\\Users\\Note\\OneDrive\\Documents\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
-	_pixelShader->CreateShader(L"C:\\Users\\Note\\OneDrive\\Documents\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
+	_vertexShader->CreateShader(L"D:\\CPP\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
+	_pixelShader->CreateShader(L"D:\\CPP\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
 }
 
 void Engine::Update()
 {
+	static TransformData data = {};
+	static XMFLOAT3 position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	position.x += 0.0001f;
+	data.world = XMMatrixTranslation(position.x, position.y, position.z);
+	data.world = XMMatrixTranspose(data.world);
+	_constantBuffer->Update(data);
 }
 
 void Engine::Render()
@@ -44,7 +53,7 @@ void Engine::Render()
 	Graphics::GetInstance()->Render();
 	_vertexShader->Render();
 	_pixelShader->Render();
-
+	_constantBuffer->Render();
 	_vertexShader->Draw();
 	Graphics::GetInstance()->SwapBuffers();
 }

@@ -141,13 +141,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DetailsWidget.cpp" />
+    <ClCompile Include="Widgets\DetailsWidget.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ViewportWidget.cpp" />
+    <ClCompile Include="Widgets\ViewportWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DetailsWidget.h" />
-    <ClInclude Include="ViewportWidget.h" />
+    <ClInclude Include="Widgets\DetailsWidget.h" />
+    <ClInclude Include="Widgets\ViewportWidget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

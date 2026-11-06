@@ -18,18 +18,18 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ViewportWidget.cpp">
+    <ClCompile Include="Widgets\ViewportWidget.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DetailsWidget.cpp">
+    <ClCompile Include="Widgets\DetailsWidget.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ViewportWidget.h">
+    <ClInclude Include="Widgets\ViewportWidget.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DetailsWidget.h">
+    <ClInclude Include="Widgets\DetailsWidget.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

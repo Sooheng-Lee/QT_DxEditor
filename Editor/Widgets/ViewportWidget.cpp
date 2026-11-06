@@ -1,0 +1,50 @@
+#include "ViewportWidget.h"
+#include <QKeyEvent>
+
+ViewportWidget::ViewportWidget(QWidget* parent) : QWidget(nullptr)
+{
+	setAttribute(Qt::WA_NativeWindow);
+	setAttribute(Qt::WA_PaintOnScreen);
+	setAttribute(Qt::WA_NoSystemBackground);
+	setMinimumSize(800, 600);
+	setFocusPolicy(Qt::StrongFocus);
+}
+
+void ViewportWidget::keyPressEvent(QKeyEvent* event)
+{
+	switch (event->key())
+	{
+	case Qt::Key_W:
+		qDebug() << "W Pressed";
+		engine->CameraMove(0.0f, 0.0f, 0.1f);
+		break;
+
+	case Qt::Key_S:
+		qDebug() << "S Pressed";
+		engine->CameraMove(0.0f, 0.0f, -0.1f);
+		break;
+	case Qt::Key_D:
+		qDebug() << "D Pressed";
+		engine->CameraMove(0.1f, 0.0f, 0.0f);
+		break;
+	case Qt::Key_A:
+		qDebug() << "A Pressed";
+		engine->CameraMove(-0.1f, 0.0f, 0.0f);
+		break;
+	}
+
+	QWidget::keyPressEvent(event);
+}
+
+void ViewportWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	QPointF currentPos = event->position();
+	if (hasPrevPos)
+	{
+		QPointF delta = currentPos - prevPos;
+		engine->CameraRotate(-delta.y(), delta.x(), 0);
+	}
+
+	prevPos = currentPos;
+	hasPrevPos = true;
+}

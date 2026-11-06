@@ -11,7 +11,8 @@ public:
 	bool InitEngine();
 	void Update();
 	void Render();
-
+	void CameraMove(float x, float y, float z);
+	void CameraRotate(float x, float y, float z);
 private:
 	HWND _handle = nullptr;
 	UINT _width = 0;

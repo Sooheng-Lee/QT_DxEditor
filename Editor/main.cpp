@@ -5,8 +5,9 @@
 #include <qwidget.h>
 #include <qtimer>
 #include <qdockwidget.h>
-#include "ViewportWidget.h"
-#include "DetailsWidget.h"
+#include <qsplitter.h>
+#include "Widgets/ViewportWidget.h"
+#include "Widgets/DetailsWidget.h"
 #include "Engine.h"
 
 #pragma comment(lib, "Engine.lib")
@@ -15,31 +16,23 @@ int main(int argc, char** argv)
 	QApplication app(argc, argv);
 	QMainWindow window;
 	window.setWindowTitle("DxEditor");
-	window.resize(1280, 720);
-	
-	ViewportWidget* viewport = new ViewportWidget(&window);
+	window.setFixedSize(1000, 600);
+	QSplitter* splitter = new QSplitter(Qt::Horizontal);
+	ViewportWidget* viewport = new ViewportWidget(splitter);
+	viewport->setFixedSize(800, 600);
 	Engine engine(viewport->GetHWND(), 800, 600);
-	window.setCentralWidget(viewport);
+	viewport->SetEngine(&engine);
+	splitter->addWidget(viewport);
 
-	DetailsWidget* details = new DetailsWidget();
-	QDockWidget* detailsDock = new QDockWidget("Dtails", &window);
-	detailsDock->setWidget(details);
-	detailsDock->setAllowedAreas(
-		Qt::LeftDockWidgetArea |
-		Qt::RightDockWidgetArea
-	);
+	DetailsWidget* details = new DetailsWidget(splitter);
+	details->setFixedSize(200, 600);
+	splitter->addWidget(details);
+	splitter->setSizeIncrement({ 1000, 600 });
 
-	window.addDockWidget(
-		Qt::RightDockWidgetArea,
-		detailsDock
-	);
-
-	window.resizeDocks(
-		{ detailsDock },
-		{ 320 },
-		Qt::Horizontal
-	);
-
+	splitter->setStretchFactor(0, 1);
+	splitter->setStretchFactor(1, 0);
+	splitter->setChildrenCollapsible(false);
+	window.setCentralWidget(splitter);
 	window.show();
 	engine.InitEngine();
 

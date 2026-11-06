@@ -46,9 +46,6 @@ void Engine::Update()
 {
 	static TransformData data = {};
 	static XMFLOAT3 position = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	static XMFLOAT3 rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	rotation = XMFLOAT3(rotation.x + 0.0001f, 0.0f, 0.0f);
-	_camera->SetRotation(rotation);
 	data.world = XMMatrixTranslation(position.x, position.y, position.z);
 	data.world = XMMatrixTranspose(data.world);
 	data.view = _camera->GetViewMat();
@@ -72,4 +69,18 @@ void Engine::Render()
 	_lightBuffer->Render();
 	_vertexShader->Draw();
 	Graphics::GetInstance()->SwapBuffers();
+}
+
+void Engine::CameraMove(float x, float y, float z)
+{
+	XMFLOAT3 position = _camera->GetPosition();
+	_camera->SetPosition(XMFLOAT3(position.x + x, position.y + y, position.z + z));
+}
+
+void Engine::CameraRotate(float x, float y, float z)
+{
+	XMFLOAT3 rotation = _camera->GetRotation();
+	rotation.x += x;
+	rotation.y += y;
+	_camera->SetRotation(rotation);
 }

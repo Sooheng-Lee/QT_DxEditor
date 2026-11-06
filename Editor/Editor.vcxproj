@@ -141,7 +141,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DetailsWidget.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ViewportWidget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DetailsWidget.h" />
+    <ClInclude Include="ViewportWidget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -87,7 +87,7 @@ void BaseShapes::CreateSphere(std::vector<VertexDefault>& vertices, std::vector<
             float z = radius * sinTheta * sinPhi;
             VertexDefault vertex = {};
             vertex.Position = XMFLOAT3(x, y, z);
-            float length = sqrtf(x * y + y * y + z * z);
+            float length = sqrtf(x * x + y * y + z * z);
 
             vertex.Normal = XMFLOAT3(length > 0 ? x / length : 0, length > 0 ? y / length : 0, length > 0 ? z / length : 0);
             vertex.UV = XMFLOAT2(theta, phi);

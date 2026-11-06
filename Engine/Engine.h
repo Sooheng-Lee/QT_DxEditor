@@ -20,5 +20,7 @@ private:
 	PixelShader* _pixelShader;
 	ConstantBuffer<TransformData>* _constantBuffer;
 	Camera* _camera;
+	DirectionalLight _light;
+	ConstantBuffer<DirectionalLight>* _lightBuffer;
 };
 

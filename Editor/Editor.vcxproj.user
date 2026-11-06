@@ -8,4 +8,7 @@
     <LocalDebuggerEnvironment>PATH=C:\Qt\6.12.0\msvc2022_64\bin;%PATH%</LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup>
+    <ShowAllFiles>true</ShowAllFiles>
+  </PropertyGroup>
 </Project>

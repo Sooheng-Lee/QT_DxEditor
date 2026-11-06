@@ -28,6 +28,8 @@ bool Engine::InitEngine()
 	_pixelShader = new PixelShader();
 	_constantBuffer = new ConstantBuffer<TransformData>();
 	_constantBuffer->CreateConstantBuffer(ERenderType::RT_VERTEX, 0);
+	_lightBuffer = new ConstantBuffer<DirectionalLight>();
+	_lightBuffer->CreateConstantBuffer(ERenderType::RT_PIXEL, 1);
 
 	std::vector<VertexDefault> vertices;
 	std::vector<UINT> indices;
@@ -35,8 +37,8 @@ bool Engine::InitEngine()
 	BaseShapes::CreateSphere(vertices, indices, 1.0f, 20.0f);
 	_vertexShader->CreateVertexBuffer(vertices);
 	_vertexShader->CreateIndexBuffer(indices);
-	_vertexShader->CreateShader(L"D:\\CPP\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
-	_pixelShader->CreateShader(L"D:\\CPP\\QT_DxEditor\\Engine\\HLSL\\DefaultColor.hlsl");
+	_vertexShader->CreateShader(L"..\\Engine\\HLSL\\DefaultColor.hlsl");
+	_pixelShader->CreateShader(L"..\\Engine\\HLSL\\DefaultColor.hlsl");
 	_camera = new Camera(90.0f, static_cast<float>(_width) / _height);
 }
 
@@ -52,6 +54,13 @@ void Engine::Update()
 	data.view = _camera->GetViewMat();
 	data.proj = _camera->GetProjMat();
 	_constantBuffer->Update(data);
+	_light.direction = { 0.0f, -1.0f, -1.0f };
+	_light.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	_light.ambientColor = { 0.1f, 0.1f, 0.1f };
+	_light.intensity = 1.0f;
+	_light.shiness = 32.0f;
+	_light.cameraPos = _camera->GetPosition();
+	_lightBuffer->Update(_light);
 }
 
 void Engine::Render()
@@ -60,6 +69,7 @@ void Engine::Render()
 	_vertexShader->Render();
 	_pixelShader->Render();
 	_constantBuffer->Render();
+	_lightBuffer->Render();
 	_vertexShader->Draw();
 	Graphics::GetInstance()->SwapBuffers();
 }

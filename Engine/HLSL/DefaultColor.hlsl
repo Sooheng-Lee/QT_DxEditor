@@ -5,6 +5,17 @@ cbuffer cbTransformData : register(b0)
     float4x4 proj;
 };
 
+cbuffer cbDirectionalLight : register(b1)
+{
+    float3 direction;
+    float shininess;
+    float4 color;
+    float3 cameraPos;
+    float specularStrength;
+    float3 ambientColor;
+    float intensity;
+};
+
 struct VertexIn
 {
     float3 position : POSITION;
@@ -19,15 +30,17 @@ struct VertexOut
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
     float4 color : COLOR;
+    float4 worldPosition : TEXCOORD1;
 };
 
 VertexOut VS(VertexIn input)
 {
     VertexOut output;
     output.position = mul(float4(input.position, 1), world);
+    output.worldPosition = output.position;
     output.position = mul(output.position, view);
     output.position = mul(output.position, proj);
-    output.normal = input.normal;
+    output.normal = mul(input.normal, (float3x3)world);
     output.uv = input.uv;
     output.color = input.color;
     return output;
@@ -35,5 +48,17 @@ VertexOut VS(VertexIn input)
 
 float4 PS(VertexOut input) : SV_TARGET
 {
-    return input.color;
+    float3 ambient = ambientColor;
+    float3 norm = normalize(input.normal);
+    float3 light = normalize(-direction);
+    float diffuseIntensity = saturate(dot(norm, light));
+    float3 diffuse = color.rgb * diffuseIntensity * intensity;
+    
+    float3 vertical = normalize(cameraPos - input.worldPosition.xyz);
+    float3 horizontal = normalize(light + vertical);
+    float specularIntensity = pow(saturate(dot(norm, horizontal)), shininess);
+    float3 specular = color.rgb * specularIntensity * specularStrength * intensity;
+    
+    float4 outputCol = float4(input.color.rgb * (ambient + diffuse) + specular, input.color.a);
+    return outputCol;
 }

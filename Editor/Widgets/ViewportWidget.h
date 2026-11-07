@@ -1,7 +1,7 @@
 #pragma once
 #include <qwidget.h>
 #include <Windows.h>
-#include "Engine/Engine.h"
+#include "Engine.h"
 
 class ViewportWidget : public QWidget
 {
@@ -18,7 +18,7 @@ protected:
 	void mouseMoveEvent(QMouseEvent* event) override;
 
 private:
-	Engine* engine;
+	Engine* engine = nullptr;
 	QPointF prevPos;
 	bool hasPrevPos = false;
 };

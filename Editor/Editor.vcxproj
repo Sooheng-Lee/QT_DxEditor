@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)..\;$(ProjectDir)INC\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\;$(ProjectDir)INC\;$(SolutionDir)Engine;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\Engine\bin\$(Platform)\$(Configuration)\;C:\Qt\6.12.0\msvc2022_64\lib;$(ProjectDir)LIB\Any\;$(ProjectDir)LIB\Debug\;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)..\;$(ProjectDir)INC\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\;$(ProjectDir)INC\;$(SolutionDir)Engine;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\Engine\bin\$(Platform)\$(Configuration)\;C:\Qt\6.12.0\msvc2022_64\lib;$(ProjectDir)LIB\Any\;$(ProjectDir)LIB\Release\;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -141,11 +141,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Widgets\TreeObjectItem.cpp" />
+    <ClCompile Include="Widgets\HierarchyWidget.cpp" />
     <ClCompile Include="Widgets\DetailsWidget.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Widgets\ViewportWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataTypes.h" />
+    <ClInclude Include="Widgets\TreeObjectItem.h" />
+    <ClInclude Include="Widgets\HierarchyWidget.h" />
     <ClInclude Include="Widgets\DetailsWidget.h" />
     <ClInclude Include="Widgets\ViewportWidget.h" />
   </ItemGroup>

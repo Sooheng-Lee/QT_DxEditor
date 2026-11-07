@@ -18,7 +18,7 @@ bool Engine::InitEngine()
 
 	std::vector<VertexDefault> vertices;
 	std::vector<UINT> indices;
-	BaseShapes::CreateBox(vertices, indices, 0.1f, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+	BaseShapes::CreateBox(vertices, indices, 1.0f, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 	BaseObject* obj1 = new BaseObject();
 	obj1->AddNewObject(vertices, indices);
 	baseObjs.push_back(obj1);

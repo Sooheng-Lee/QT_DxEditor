@@ -1,54 +1,77 @@
-#include <iostream>
-#include "Engine/DxEngineAPI.h"
-#include <qapplication.h>
-#include <qmainwindow.h>
-#include <qwidget.h>
-#include <qtimer>
-#include <qdockwidget.h>
-#include <qsplitter.h>
+#include <QApplication>
+#include <QMainWindow>
+#include <QTimer>
+#include <QDockWidget>
+#include <QMenuBar>
+#include <QMenu>
 #include "Widgets/ViewportWidget.h"
 #include "Widgets/DetailsWidget.h"
-#include "Engine/Engine.h"
+#include "Widgets/HierarchyWidget.h"
+#include "Engine.h"
 
 #pragma comment(lib, "Engine.lib")
+
 int main(int argc, char** argv)
 {
-	QApplication app(argc, argv);
-	QMainWindow window;
-	window.setWindowTitle("DxEditor");
-	window.setFixedSize(1000, 600);
-	QSplitter* splitter = new QSplitter(Qt::Horizontal);
-	ViewportWidget* viewport = new ViewportWidget(splitter);
-	viewport->setFixedSize(800, 600);
-	Engine engine(viewport->GetHWND(), 800, 600);
-	viewport->SetEngine(&engine);
-	splitter->addWidget(viewport);
+    QApplication app(argc, argv);
+    QMainWindow window;
+    window.setWindowTitle("DxEditor");
+    window.resize(1400, 800);
+    window.setDockNestingEnabled(true);
+    QMenu* viewMenu = window.menuBar()->addMenu("View");
 
-	DetailsWidget* details = new DetailsWidget(splitter);
-	details->setFixedSize(200, 600);
-	splitter->addWidget(details);
-	splitter->setSizeIncrement({ 1000, 600 });
+    // Keep the native DirectX surface separate from the dock's title bar.
+    auto addDock = [&](const QString& title, const QString& name,
+        QWidget* widget, Qt::DockWidgetArea area)
+    {
+        QDockWidget* dock = new QDockWidget(title, &window);
+        dock->setObjectName(name);
+        dock->setAllowedAreas(Qt::AllDockWidgetAreas);
+        dock->setFeatures(QDockWidget::DockWidgetClosable |
+            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+        dock->setWidget(widget);
+        window.addDockWidget(area, dock);
+        viewMenu->addAction(dock->toggleViewAction());
+        return dock;
+    };
 
-	splitter->setStretchFactor(0, 1);
-	splitter->setStretchFactor(1, 0);
-	splitter->setChildrenCollapsible(false);
-	window.setCentralWidget(splitter);
-	window.show();
-	engine.InitEngine();
+    ViewportWidget* viewport = new ViewportWidget(&window);
+    QDockWidget* viewportDock = addDock("Viewport", "ViewportDock",
+        viewport, Qt::LeftDockWidgetArea);
+    HierarchyWidget* hierarchy = new HierarchyWidget(&window);
+    QDockWidget* hierarchyDock = addDock("Hierarchy", "HierarchyDock",
+        hierarchy, Qt::RightDockWidgetArea);
+    DetailsWidget* details = new DetailsWidget(&window);
+    QDockWidget* detailsDock = addDock("Details", "DetailsDock",
+        details, Qt::RightDockWidgetArea);
+    window.splitDockWidget(hierarchyDock, detailsDock, Qt::Vertical);
+    window.resizeDocks({ viewportDock, hierarchyDock }, { 1000, 400 }, Qt::Horizontal);
+    window.resizeDocks({ hierarchyDock, detailsDock }, { 300, 500 }, Qt::Vertical);
 
-	
-	//QTimer renderTimer;
-	//QObject::connect(&renderTimer, &QTimer::timeout, [&]()
-	//	{
-	//		engine.Render();
-	//	});
-	// renderTimer.start(16);
-	while (window.isVisible())
-	{
-		QApplication::processEvents();
-		engine.Update();
-		engine.Render();
-	}
+    TreeObjectItem* player = hierarchy->AddObject("Player");
+    hierarchy->AddObject("Camera", player);
+    hierarchy->AddObject("Mesh", player);
+    TreeObjectItem* environment = hierarchy->AddObject("Environment");
+    hierarchy->AddObject("Cube", environment);
+    hierarchy->AddObject("Sphere", environment);
 
-	return 0;
+    window.show();
+    Engine engine(viewport->GetHWND(), viewport->width(), viewport->height());
+    if (!engine.InitEngine())
+        return 1;
+    viewport->SetEngine(&engine);
+
+    QTimer renderTimer;
+    QObject::connect(&renderTimer, &QTimer::timeout, &window, [&]()
+    {
+        engine.Update();
+        if (viewport->isVisible() && !viewport->window()->isMinimized())
+            engine.Render();
+    });
+    renderTimer.start(16);
+
+    const int result = app.exec();
+    renderTimer.stop();
+    viewport->SetEngine(nullptr);
+    return result;
 }

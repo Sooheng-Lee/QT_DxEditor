@@ -24,12 +24,27 @@
     <ClCompile Include="Widgets\DetailsWidget.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Widgets\HierarchyWidget.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\TreeObjectItem.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Widgets\ViewportWidget.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Widgets\DetailsWidget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypes.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widgets\HierarchyWidget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widgets\TreeObjectItem.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

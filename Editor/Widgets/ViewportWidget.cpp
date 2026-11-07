@@ -1,17 +1,18 @@
 #include "ViewportWidget.h"
 #include <QKeyEvent>
 
-ViewportWidget::ViewportWidget(QWidget* parent) : QWidget(nullptr)
+ViewportWidget::ViewportWidget(QWidget* parent) : QWidget(parent)
 {
 	setAttribute(Qt::WA_NativeWindow);
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_NoSystemBackground);
-	setMinimumSize(800, 600);
+	setMinimumSize(320, 240);
 	setFocusPolicy(Qt::StrongFocus);
 }
 
 void ViewportWidget::keyPressEvent(QKeyEvent* event)
 {
+	if (!engine) { QWidget::keyPressEvent(event); return; }
 	switch (event->key())
 	{
 	case Qt::Key_W:
@@ -38,6 +39,7 @@ void ViewportWidget::keyPressEvent(QKeyEvent* event)
 
 void ViewportWidget::mouseMoveEvent(QMouseEvent* event)
 {
+	if (!engine) return;
 	QPointF currentPos = event->position();
 	if (hasPrevPos)
 	{

@@ -28,10 +28,6 @@ void Camera::SetRotation(XMFLOAT3 newRot)
 	Update();
 }
 
-void BaseObject::UpdateTransform()
-{
-}
-
 void Camera::Update()
 {
 	UpdateViewMat();

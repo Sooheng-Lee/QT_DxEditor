@@ -9,6 +9,8 @@ enum class PrimitiveType
 	Sphere
 };
 
+enum class TransformComponent { Location, Rotation, Scale };
+
 class DX_ENGINE_API Engine final
 {
 public:
@@ -18,6 +20,7 @@ public:
 	// Engine owns the returned object until removal or engine destruction.
 	BaseObject* CreatePrimitive(PrimitiveType type);
 	bool RemoveObject(BaseObject* object);
+	bool SetTransformComponent(BaseObject* object, TransformComponent component, int axis, float value);
 	void Update();
 	void Render();
 	void CameraMove(float x, float y, float z);

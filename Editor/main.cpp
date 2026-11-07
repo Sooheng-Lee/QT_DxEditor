@@ -44,6 +44,12 @@ int main(int argc, char** argv)
     DetailsWidget* details = new DetailsWidget(&window);
     QDockWidget* detailsDock = addDock("Details", "DetailsDock",
         details, Qt::RightDockWidgetArea);
+    QObject::connect(hierarchy->GetSelectionModel(), &QItemSelectionModel::selectionChanged,
+        details, [hierarchy, details]()
+        {
+            TreeObjectItem* item = hierarchy->GetSelectedObject();
+            details->SetObject(item ? item->GetEngineObject() : nullptr);
+        });
     window.splitDockWidget(hierarchyDock, detailsDock, Qt::Vertical);
     window.resizeDocks({ viewportDock, hierarchyDock }, { 1000, 400 }, Qt::Horizontal);
     window.resizeDocks({ hierarchyDock, detailsDock }, { 300, 500 }, Qt::Vertical);
@@ -54,6 +60,13 @@ int main(int argc, char** argv)
         return 1;
     viewport->SetEngine(&engine);
     hierarchy->SetEngine(&engine);
+    details->SetTransformChangedCallback([hierarchy, &engine](TransformComponent component, int axis, float value)
+    {
+        // Resolve the current selection on every edit instead of retaining an object pointer.
+        TreeObjectItem* item = hierarchy->GetSelectedObject();
+        if (item)
+            engine.SetTransformComponent(item->GetEngineObject(), component, axis, value);
+    });
     hierarchy->CreatePrimitive(PrimitiveType::Cube);
     hierarchy->CreatePrimitive(PrimitiveType::Sphere);
 
@@ -68,6 +81,8 @@ int main(int argc, char** argv)
 
     const int result = app.exec();
     renderTimer.stop();
+    details->SetTransformChangedCallback({});
+    details->SetObject(nullptr);
     hierarchy->SetEngine(nullptr);
     viewport->SetEngine(nullptr);
     return result;

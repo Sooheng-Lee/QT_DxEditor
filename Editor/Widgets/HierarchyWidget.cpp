@@ -99,7 +99,7 @@ void HierarchyWidget::RemoveObject(TreeObjectItem* item)
 
 TreeObjectItem* HierarchyWidget::GetSelectedObject() const
 {
-	TreeObjectItem* item = reinterpret_cast<TreeObjectItem*>(tree->currentItem());
-	if (!item) return nullptr;
-	return item;
+	const auto selectedItems = tree->selectedItems();
+	return selectedItems.isEmpty() ? nullptr
+		: static_cast<TreeObjectItem*>(selectedItems.first());
 }

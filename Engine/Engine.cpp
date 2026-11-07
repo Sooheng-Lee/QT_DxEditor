@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include <algorithm>
+#include <cmath>
 
 Engine::Engine(HWND handle, UINT width = 0, UINT height = 0)
 	: _handle(handle), _width(width), _height(height)
@@ -61,6 +62,33 @@ bool Engine::RemoveObject(BaseObject* object)
 
     baseObjs.erase(it);
     delete object;
+    return true;
+}
+
+bool Engine::SetTransformComponent(BaseObject* object, TransformComponent component, int axis, float value)
+{
+    if (axis < 0 || axis > 2 || !std::isfinite(value) ||
+        std::find(baseObjs.begin(), baseObjs.end(), object) == baseObjs.end())
+        return false;
+
+    XMFLOAT3 vector;
+    switch (component)
+    {
+    case TransformComponent::Location: vector = object->GetPosition(); break;
+    case TransformComponent::Rotation: vector = object->GetRotation(); break;
+    case TransformComponent::Scale: vector = object->GetScale(); break;
+    default: return false;
+    }
+    if (axis == 0) vector.x = value;
+    else if (axis == 1) vector.y = value;
+    else vector.z = value;
+
+    switch (component)
+    {
+    case TransformComponent::Location: object->SetPosition(vector); break;
+    case TransformComponent::Rotation: object->SetRotation(vector); break;
+    case TransformComponent::Scale: object->SetScale(vector); break;
+    }
     return true;
 }
 

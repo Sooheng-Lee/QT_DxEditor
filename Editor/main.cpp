@@ -48,18 +48,14 @@ int main(int argc, char** argv)
     window.resizeDocks({ viewportDock, hierarchyDock }, { 1000, 400 }, Qt::Horizontal);
     window.resizeDocks({ hierarchyDock, detailsDock }, { 300, 500 }, Qt::Vertical);
 
-    TreeObjectItem* player = hierarchy->AddObject("Player");
-    hierarchy->AddObject("Camera", player);
-    hierarchy->AddObject("Mesh", player);
-    TreeObjectItem* environment = hierarchy->AddObject("Environment");
-    hierarchy->AddObject("Cube", environment);
-    hierarchy->AddObject("Sphere", environment);
-
     window.show();
     Engine engine(viewport->GetHWND(), viewport->width(), viewport->height());
     if (!engine.InitEngine())
         return 1;
     viewport->SetEngine(&engine);
+    hierarchy->SetEngine(&engine);
+    hierarchy->CreatePrimitive(PrimitiveType::Cube);
+    hierarchy->CreatePrimitive(PrimitiveType::Sphere);
 
     QTimer renderTimer;
     QObject::connect(&renderTimer, &QTimer::timeout, &window, [&]()
@@ -72,6 +68,7 @@ int main(int argc, char** argv)
 
     const int result = app.exec();
     renderTimer.stop();
+    hierarchy->SetEngine(nullptr);
     viewport->SetEngine(nullptr);
     return result;
 }

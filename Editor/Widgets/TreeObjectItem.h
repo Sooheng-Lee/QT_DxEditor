@@ -9,6 +9,10 @@ public:
 	TreeObjectItem(const QString& name, TreeObjectItem* parent = nullptr);
 	~TreeObjectItem() override = default;
 
+	// Non-owning reference; Engine owns scene objects.
+	void SetEngineObject(BaseObject* value) { object = value; }
+	BaseObject* GetEngineObject() const { return object; }
+
 	void SetName(const QString& name);
 	QString GetName() const;
 	TreeObjectItem* GetParent() const;

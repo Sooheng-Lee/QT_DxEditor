@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include <algorithm>
 
 Engine::Engine(HWND handle, UINT width = 0, UINT height = 0)
 	: _handle(handle), _width(width), _height(height)
@@ -7,6 +8,10 @@ Engine::Engine(HWND handle, UINT width = 0, UINT height = 0)
 
 Engine::~Engine()
 {
+	for (BaseObject* object : baseObjs)
+		delete object;
+	delete _lightBuffer;
+	delete _camera;
 }
 
 bool Engine::InitEngine()
@@ -16,20 +21,47 @@ bool Engine::InitEngine()
 	_lightBuffer = new ConstantBuffer<DirectionalLight>();
 	_lightBuffer->CreateConstantBuffer(ERenderType::RT_PIXEL, 1);
 
-	std::vector<VertexDefault> vertices;
-	std::vector<UINT> indices;
-	BaseShapes::CreateBox(vertices, indices, 1.0f, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
-	BaseObject* obj1 = new BaseObject();
-	obj1->AddNewObject(vertices, indices);
-	baseObjs.push_back(obj1);
-	vertices.clear();
-	indices.clear();
-	BaseShapes::CreateSphere(vertices, indices, 1.0f, 20.0f);
-	BaseObject* obj2 = new BaseObject();
-	obj2->AddNewObject(vertices, indices);
-	baseObjs.push_back(obj2);
 	_camera = new Camera(90.0f, static_cast<float>(_width) / _height);
 	return true;
+}
+
+BaseObject* Engine::CreatePrimitive(PrimitiveType type)
+{
+    if (!_camera)
+        return nullptr;
+
+    std::vector<VertexDefault> vertices;
+    std::vector<UINT> indices;
+    switch (type)
+    {
+    case PrimitiveType::Cube:
+        BaseShapes::CreateBox(vertices, indices, 1.0f,
+            XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+        break;
+    case PrimitiveType::Sphere:
+        BaseShapes::CreateSphere(vertices, indices, 1.0f, 20);
+        break;
+    default:
+        return nullptr;
+    }
+
+    auto object = std::make_unique<BaseObject>();
+    object->AddNewObject(vertices, indices);
+    object->GetViewProj(_camera);
+    object->Update();
+    baseObjs.push_back(object.get());
+    return object.release();
+}
+
+bool Engine::RemoveObject(BaseObject* object)
+{
+    const auto it = std::find(baseObjs.begin(), baseObjs.end(), object);
+    if (it == baseObjs.end())
+        return false;
+
+    baseObjs.erase(it);
+    delete object;
+    return true;
 }
 
 void Engine::Update()

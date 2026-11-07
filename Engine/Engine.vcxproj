@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\BaseObject.h" />
     <ClInclude Include="Components\Camera.h" />
     <ClInclude Include="DataTypes.h" />
     <ClInclude Include="Graphics\ConstantBuffer.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\BaseObject.cpp" />
     <ClCompile Include="Components\Camera.cpp" />
     <ClCompile Include="Graphics\ConstantBuffer.cpp" />
     <ClCompile Include="Engine.cpp">

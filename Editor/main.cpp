@@ -1,5 +1,5 @@
 #include <iostream>
-#include "DxEngineAPI.h"
+#include "Engine/DxEngineAPI.h"
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qwidget.h>
@@ -8,7 +8,7 @@
 #include <qsplitter.h>
 #include "Widgets/ViewportWidget.h"
 #include "Widgets/DetailsWidget.h"
-#include "Engine.h"
+#include "Engine/Engine.h"
 
 #pragma comment(lib, "Engine.lib")
 int main(int argc, char** argv)

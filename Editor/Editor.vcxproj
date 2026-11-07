@@ -71,13 +71,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)INC\;$(SolutionDir)Engine\;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Qt\6.12.0\msvc2022_64\lib;$(ProjectDir)LIB\Any\;$(ProjectDir)LIB\Debug\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\;$(ProjectDir)INC\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\Engine\bin\$(Platform)\$(Configuration)\;C:\Qt\6.12.0\msvc2022_64\lib;$(ProjectDir)LIB\Any\;$(ProjectDir)LIB\Debug\;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)INC\;$(SolutionDir)Engine\;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Qt\6.12.0\msvc2022_64\lib;$(ProjectDir)LIB\Any\;$(ProjectDir)LIB\Release\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\;$(ProjectDir)INC\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\Engine\bin\$(Platform)\$(Configuration)\;C:\Qt\6.12.0\msvc2022_64\lib;$(ProjectDir)LIB\Any\;$(ProjectDir)LIB\Release\;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -149,7 +149,15 @@
     <ClInclude Include="Widgets\DetailsWidget.h" />
     <ClInclude Include="Widgets\ViewportWidget.h" />
   </ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='x64'">
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{92b188f1-4070-4e1b-b76c-55dcc435b147}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="CopyEngineRuntime" AfterTargets="Build" Condition="'$(Platform)'=='x64'">
+    <Copy SourceFiles="$(ProjectDir)..\Engine\bin\$(Platform)\$(Configuration)\Engine.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

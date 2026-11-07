@@ -5,6 +5,7 @@
 #include <vector>
 #include <assert.h>
 #include <wrl/client.h>
+#include <memory>
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -17,3 +18,5 @@ using namespace Microsoft::WRL;
 #include "Graphics/Shaders.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Components/Camera.h"
+
+#include "Objects/BaseObject.h"

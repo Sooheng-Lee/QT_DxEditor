@@ -29,9 +29,14 @@ private:
 	HWND _handle = nullptr;
 	UINT _width = 0;
 	UINT _height = 0;
+	std::unique_ptr<BlendState> _opaqueState;
+	std::unique_ptr<BlendState> _alphaState;
+	std::unique_ptr<RasterizerState> _solidState;
+	std::unique_ptr<RasterizerState> _wireframeState;
 	Camera* _camera = nullptr;
 	DirectionalLight _light;
 	ConstantBuffer<DirectionalLight>* _lightBuffer = nullptr;
+
 	std::vector<BaseObject*> baseObjs;
 };
 

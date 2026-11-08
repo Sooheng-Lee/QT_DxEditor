@@ -67,8 +67,6 @@ int main(int argc, char** argv)
         if (item)
             engine.SetTransformComponent(item->GetEngineObject(), component, axis, value);
     });
-    hierarchy->CreatePrimitive(PrimitiveType::Cube);
-    hierarchy->CreatePrimitive(PrimitiveType::Sphere);
 
     QTimer renderTimer;
     QObject::connect(&renderTimer, &QTimer::timeout, &window, [&]()

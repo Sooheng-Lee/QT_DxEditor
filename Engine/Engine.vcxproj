@@ -143,6 +143,8 @@
     <ClInclude Include="Graphics\Graphics.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Graphics\Shaders.h" />
+    <ClInclude Include="Graphics\BlendState.h" />
+    <ClInclude Include="Graphics\RasterizerState.h" />
     <ClInclude Include="VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +166,8 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Graphics\Shaders.cpp" />
+    <ClCompile Include="Graphics\BlendState.cpp" />
+    <ClCompile Include="Graphics\RasterizerState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\DefaultColor.hlsl">

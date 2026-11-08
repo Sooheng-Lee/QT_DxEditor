@@ -16,7 +16,7 @@ void BaseShapes::CreateBox(std::vector<VertexDefault>& vertices, std::vector<UIN
          {{-size,  size, -size}, { 0,  0, -1}, {1, 0}, color}, // 6
          {{-size, -size, -size}, { 0,  0, -1}, {1, 1}, color}, // 7
 
-         // Rigsizet (+X)
+         // Right (+X)
          {{ size, -size,  size}, { 1,  0,  0}, {0, 1}, color}, // 8
          {{ size,  size,  size}, { 1,  0,  0}, {0, 0}, color}, // 9
          {{ size,  size, -size}, { 1,  0,  0}, {1, 0}, color}, // 10
@@ -41,30 +41,31 @@ void BaseShapes::CreateBox(std::vector<VertexDefault>& vertices, std::vector<UIN
          {{ size, -size, -size}, { 0, -1,  0}, {1, 1}, color}  // 23
     };
 
+    // Match the outward normals and clockwise front faces (FrontCounterClockwise = false).
     indices = {
         // Front (+Z)
-        0, 1, 2,
-        0, 2, 3,
+        0, 2, 1,
+        0, 3, 2,
 
         // Back (-Z)
-        4, 5, 6,
-        4, 6, 7,
+        4, 6, 5,
+        4, 7, 6,
 
         // Right (+X)
-        8, 9, 10,
-        8, 10, 11,
+        8, 10, 9,
+        8, 11, 10,
 
         // Left (-X)
-        12, 13, 14,
-        12, 14, 15,
+        12, 14, 13,
+        12, 15, 14,
 
         // Top (+Y)
-        16, 17, 18,
-        16, 18, 19,
+        16, 18, 17,
+        16, 19, 18,
 
         // Bottom (-Y)
-        20, 21, 22,
-        20, 22, 23
+        20, 22, 21,
+        20, 23, 22
     };
 }
 

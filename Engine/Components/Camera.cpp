@@ -41,7 +41,7 @@ void Camera::UpdateViewMat()
 	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(XMConvertToRadians(_rotation.x), XMConvertToRadians(_rotation.y), XMConvertToRadians(_rotation.z));
 	XMVECTOR forward = XMVector4Transform(_DEFAULT_FORWARD_VECTOR, rotMat);
 	XMVECTOR up = XMVector4Transform(_DEFAULT_UP_VECTOR, rotMat);
-	XMVECTOR right = XMVector3Cross(forward, up);
+	XMVECTOR right = XMVector3Cross(up, forward);
 
 	float Tx = -XMVectorGetX(XMVector3Dot(eye, right));
 	float Ty = -XMVectorGetX(XMVector3Dot(eye, up));

@@ -66,6 +66,6 @@ void BaseObject::UpdateTransform()
 {
 	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
 	XMMATRIX rotation = XMMatrixRotationRollPitchYaw(_rotation.x, _rotation.y, _rotation.z);
-	XMMATRIX translate = XMMatrixTranslation(_location.x, _location.y, _location.z);
-	transformData.world = XMMatrixTranspose(scale * rotation * translate);
+	XMMATRIX location = XMMatrixTranslation(_location.x, _location.y, _location.z);
+	transformData.world = XMMatrixTranspose(scale * rotation * location);
 }

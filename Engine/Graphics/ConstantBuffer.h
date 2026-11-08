@@ -30,7 +30,6 @@ template<typename T>
 inline  void ConstantBuffer<T>::Update(const T& data)
 {
 	D3D11_MAPPED_SUBRESOURCE resource;
-	// A buffer has one subresource; the shader binding slot is used only in Render().
 	HRESULT hr = Graphics::GetInstance()->GetContext()->Map(_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	if (SUCCEEDED(hr))
 	{

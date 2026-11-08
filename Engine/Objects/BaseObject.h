@@ -24,6 +24,7 @@ protected:
 	std::unique_ptr<ConstantBuffer<TransformData>> transformBuffer;
 	std::vector<std::unique_ptr<BaseObject>> subObjects;
 
+
 private:
 	XMFLOAT3 _location = XMFLOAT3(0, 0, 0);
 	XMFLOAT3 _rotation = XMFLOAT3(0, 0, 0);

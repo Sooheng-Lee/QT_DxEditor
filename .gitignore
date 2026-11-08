@@ -11,6 +11,7 @@ bin/
 # Editor intermediate directories
 /Editor/Debug/
 /Editor/Release/
+/Editor/x64/
 /Editor/x64/Debug/
 /Editor/x64/Release/
 

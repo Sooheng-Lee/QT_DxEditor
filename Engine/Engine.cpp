@@ -44,6 +44,9 @@ BaseObject* Engine::CreatePrimitive(PrimitiveType type)
     case PrimitiveType::Sphere:
         BaseShapes::CreateSphere(vertices, indices, 1.0f, 20);
         break;
+    case PrimitiveType::Cylinder:
+        BaseShapes::CreateCylinder(vertices, indices, 1.0f, 2.0f, 20);
+        break;
     default:
         return nullptr;
     }

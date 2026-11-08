@@ -113,3 +113,95 @@ void BaseShapes::CreateSphere(std::vector<VertexDefault>& vertices, std::vector<
         };
     }
 }
+
+void BaseShapes::CreateCylinder(std::vector<VertexDefault>& vertices, std::vector<UINT>& indices, float radius, float height, UINT sliceCount, XMFLOAT4 color)
+{
+    if (radius <= 0.0f || height <= 0.0f || sliceCount < 3) return;
+
+    constexpr float PI = XM_PI;
+    const float halfHeight = height * 0.5f;
+    for (UINT y = 0; y < 2; ++y)
+    {
+        double bt = halfHeight * pow(-1, y+1);
+        for (UINT x = 0; x < sliceCount + 1; ++x)
+        {
+            float slice = static_cast<float>(x) / sliceCount;
+            float theta = slice * XM_2PI;
+
+            float cosTheta = cosf(theta);
+            float sinTheta = sinf(theta);
+
+            VertexDefault vertex = {};
+            vertex.Position = XMFLOAT3(radius * cosTheta, bt, radius * sinTheta);
+            vertex.Normal = XMFLOAT3(cosTheta, 0.0f, sinTheta);
+            vertex.UV = XMFLOAT2(slice, 1.0f - y);
+            vertex.Color = color;
+            vertices.push_back(vertex);
+        }
+    }
+
+    const UINT ringSize = sliceCount + 1;
+    for (UINT idx = 0; idx < sliceCount; ++idx)
+    {
+        UINT bt0 = idx;
+        UINT bt1 = idx + 1;
+        UINT top0 = ringSize + bt0;
+        UINT top1 = ringSize + bt1;
+
+        indices.push_back(bt0);
+        indices.push_back(top0);
+        indices.push_back(bt1);
+        indices.push_back(bt1);
+        indices.push_back(top0);
+        indices.push_back(top1);
+    }
+
+    for (UINT cap = 0; cap < 2; ++cap)
+    {
+        float normalY = halfHeight * pow(-1, cap);
+        float y = halfHeight * normalY;
+
+        UINT centerIdx = static_cast<UINT>(vertices.size());
+        VertexDefault center = {};
+        center.Position = XMFLOAT3(0, y, 0);
+        center.Normal = XMFLOAT3(0, normalY, 0);
+        center.UV = XMFLOAT2(0.5f, 0.5f);
+        center.Color = color;
+
+        UINT startIdx = static_cast<UINT>(vertices.size());
+
+        for (UINT i = 0; i <= sliceCount; ++i)
+        {
+            float theta = XM_2PI * i / sliceCount;
+            float x = radius * cosf(theta);
+            float z = radius * sinf(theta);
+
+            VertexDefault Vertex = {};
+            Vertex.Position = XMFLOAT3(x, y, z);
+            Vertex.Normal = XMFLOAT3(0, normalY, 0);
+            Vertex.UV = XMFLOAT2(
+                0.5f + x / (2.0f * radius),
+                0.5f - z / (2.0f * radius)
+            );
+            Vertex.Color = XMFLOAT4(1, 1, 1, 1);
+
+            vertices.push_back(Vertex);
+        }
+
+        for (UINT idx = 0; idx < sliceCount; ++idx)
+        {
+            if (y > 0)
+            {
+                indices.push_back(centerIdx);
+                indices.push_back(startIdx + idx + 1);
+                indices.push_back(startIdx + idx);
+            }
+            else
+            {
+                indices.push_back(centerIdx);
+                indices.push_back(startIdx + idx);
+                indices.push_back(startIdx + idx + 1);
+            }
+        }
+    }
+}

@@ -6,7 +6,8 @@
 enum class PrimitiveType
 {
 	Cube,
-	Sphere
+	Sphere,
+	Cylinder
 };
 
 enum class TransformComponent { Location, Rotation, Scale };

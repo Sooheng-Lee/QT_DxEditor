@@ -48,6 +48,10 @@ void HierarchyWidget::ShowContextMenu(const QPoint& position)
     {
         CreatePrimitive(PrimitiveType::Sphere);
     });
+    createMenu->addAction("Cylinder", this, [this]()
+    {
+        CreatePrimitive(PrimitiveType::Cylinder);
+    });
     QAction* lightAction = createMenu->addAction("Directional Light", this, [this]()
     {
         CreateDirectionalLight();
@@ -73,7 +77,14 @@ TreeObjectItem* HierarchyWidget::CreatePrimitive(PrimitiveType type)
     if (!object)
         return nullptr;
 
-    const QString name = type == PrimitiveType::Cube ? "Cube" : "Sphere";
+    QString name;
+    switch (type)
+    {
+    case PrimitiveType::Cube: name = "Cube"; break;
+    case PrimitiveType::Sphere: name = "Sphere"; break;
+    case PrimitiveType::Cylinder: name = "Cylinder"; break;
+    default: name = "Object"; break;
+    }
     // The engine stores a flat scene, so new objects are root items.
     TreeObjectItem* item = AddObject(name);
     item->SetEngineObject(object);

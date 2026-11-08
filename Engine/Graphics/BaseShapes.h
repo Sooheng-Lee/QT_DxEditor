@@ -3,5 +3,6 @@ namespace BaseShapes
 {
 	void CreateBox(std::vector<VertexDefault>& vertices, std::vector<UINT>& indices, float size = 0.5f, XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 	void CreateSphere(std::vector<VertexDefault>& vertices, std::vector<UINT>& indices, float radius=1.0f, UINT slices = 10, XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	void CreateCylinder(std::vector<VertexDefault>& vertices, std::vector<UINT>& indices, float radius = 1.0f, float height = 1.0f, UINT sliceCount = 20, XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 };
 

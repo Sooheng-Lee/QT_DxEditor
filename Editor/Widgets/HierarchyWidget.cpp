@@ -1,6 +1,7 @@
 #include "HierarchyWidget.h"
 #include <QVBoxLayout>
 #include <QMenu>
+#include <QShortcut>
 #include "Engine.h"
 HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent)
 {
@@ -21,6 +22,12 @@ HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent)
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tree, &QWidget::customContextMenuRequested,
         this, &HierarchyWidget::ShowContextMenu);
+    auto deleteShortcut = new QShortcut(QKeySequence::Delete, tree);
+    deleteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    connect(deleteShortcut, &QShortcut::activated, this, [this]()
+    {
+        RemoveObject(GetSelectedObject());
+    });
 }
 
 void HierarchyWidget::ShowContextMenu(const QPoint& position)
@@ -41,6 +48,11 @@ void HierarchyWidget::ShowContextMenu(const QPoint& position)
     {
         CreatePrimitive(PrimitiveType::Sphere);
     });
+    QAction* lightAction = createMenu->addAction("Directional Light", this, [this]()
+    {
+        CreateDirectionalLight();
+    });
+    lightAction->setEnabled(engine && !engine->HasDirectionalLight() && !directionalLightItem);
     if (selectedItem)
     {
         QAction* deleteAction = menu.addAction("Delete", this, [this, selectedItem]()
@@ -70,6 +82,17 @@ TreeObjectItem* HierarchyWidget::CreatePrimitive(PrimitiveType type)
     return item;
 }
 
+TreeObjectItem* HierarchyWidget::CreateDirectionalLight()
+{
+    if (!engine || directionalLightItem || !engine->CreateDirectionalLight())
+        return nullptr;
+
+    directionalLightItem = AddObject("Directional Light");
+    tree->setCurrentItem(directionalLightItem);
+    tree->scrollToItem(directionalLightItem);
+    return directionalLightItem;
+}
+
 TreeObjectItem* HierarchyWidget::AddObject(const QString& name, TreeObjectItem* parent)
 {
 	TreeObjectItem* item = new TreeObjectItem(name, parent);
@@ -89,6 +112,11 @@ void HierarchyWidget::RemoveObject(TreeObjectItem* item)
     while (item->childCount() > 0)
         RemoveObject(item->GetChild(0));
 
+    if (item == directionalLightItem)
+    {
+        engine->RemoveDirectionalLight();
+        directionalLightItem = nullptr;
+    }
     if (BaseObject* object = item->GetEngineObject())
     {
         engine->RemoveObject(object);

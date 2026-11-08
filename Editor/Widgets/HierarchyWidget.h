@@ -12,6 +12,8 @@ public:
 
 	void SetEngine(Engine* value) { engine = value; }
 	TreeObjectItem* CreatePrimitive(PrimitiveType type);
+	TreeObjectItem* CreateDirectionalLight();
+	bool IsDirectionalLight(const TreeObjectItem* item) const { return item && item == directionalLightItem; }
 
 	TreeObjectItem* AddObject(const QString& name, TreeObjectItem* parent = nullptr);
 	void RemoveObject(TreeObjectItem* item);
@@ -22,5 +24,6 @@ private:
 	void ShowContextMenu(const QPoint& position);
 	Engine* engine = nullptr;
 	QTreeWidget* tree = nullptr;
+	TreeObjectItem* directionalLightItem = nullptr;
 };
 

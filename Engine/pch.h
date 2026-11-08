@@ -22,3 +22,4 @@ using namespace Microsoft::WRL;
 #include "Components/Camera.h"
 
 #include "Objects/BaseObject.h"
+#include "Objects/DirectionalLight.h"

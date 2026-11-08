@@ -44,12 +44,6 @@ int main(int argc, char** argv)
     DetailsWidget* details = new DetailsWidget(&window);
     QDockWidget* detailsDock = addDock("Details", "DetailsDock",
         details, Qt::RightDockWidgetArea);
-    QObject::connect(hierarchy->GetSelectionModel(), &QItemSelectionModel::selectionChanged,
-        details, [hierarchy, details]()
-        {
-            TreeObjectItem* item = hierarchy->GetSelectedObject();
-            details->SetObject(item ? item->GetEngineObject() : nullptr);
-        });
     window.splitDockWidget(hierarchyDock, detailsDock, Qt::Vertical);
     window.resizeDocks({ viewportDock, hierarchyDock }, { 1000, 400 }, Qt::Horizontal);
     window.resizeDocks({ hierarchyDock, detailsDock }, { 300, 500 }, Qt::Vertical);
@@ -60,6 +54,25 @@ int main(int argc, char** argv)
         return 1;
     viewport->SetEngine(&engine);
     hierarchy->SetEngine(&engine);
+    auto refreshDetails = [hierarchy, details, &engine]()
+    {
+        TreeObjectItem* item = hierarchy->GetSelectedObject();
+        DirectionalLightData data;
+        if (hierarchy->IsDirectionalLight(item) && engine.GetDirectionalLightData(data))
+            details->SetDirectionalLight(data);
+        else
+            details->SetObject(item ? item->GetEngineObject() : nullptr);
+    };
+    auto selectionConnection = QObject::connect(hierarchy->GetSelectionModel(),
+        &QItemSelectionModel::selectionChanged, details, refreshDetails);
+    details->SetLightChangedCallback([hierarchy, &engine, refreshDetails](LightProperty property, int axis, float value)
+    {
+        if (hierarchy->IsDirectionalLight(hierarchy->GetSelectedObject()))
+        {
+            engine.SetDirectionalLightComponent(property, axis, value);
+            refreshDetails();
+        }
+    });
     details->SetTransformChangedCallback([hierarchy, &engine](TransformComponent component, int axis, float value)
     {
         // Resolve the current selection on every edit instead of retaining an object pointer.
@@ -79,6 +92,8 @@ int main(int argc, char** argv)
 
     const int result = app.exec();
     renderTimer.stop();
+    QObject::disconnect(selectionConnection);
+    details->SetLightChangedCallback({});
     details->SetTransformChangedCallback({});
     details->SetObject(nullptr);
     hierarchy->SetEngine(nullptr);

@@ -10,6 +10,7 @@ enum class PrimitiveType
 };
 
 enum class TransformComponent { Location, Rotation, Scale };
+enum class LightProperty { Direction, Color, CameraPosition, AmbientColor, Shininess, SpecularStrength, Intensity };
 
 class DX_ENGINE_API Engine final
 {
@@ -21,6 +22,12 @@ public:
 	BaseObject* CreatePrimitive(PrimitiveType type);
 	bool RemoveObject(BaseObject* object);
 	bool SetTransformComponent(BaseObject* object, TransformComponent component, int axis, float value);
+	// Returns false when a light already exists or the engine is not initialized.
+	bool CreateDirectionalLight();
+	bool HasDirectionalLight() const;
+	void RemoveDirectionalLight();
+	bool GetDirectionalLightData(DirectionalLightData& data) const;
+	bool SetDirectionalLightComponent(LightProperty property, int axis, float value);
 	void Update();
 	void Render();
 	void CameraMove(float x, float y, float z);
@@ -33,10 +40,8 @@ private:
 	std::unique_ptr<BlendState> _alphaState;
 	std::unique_ptr<RasterizerState> _solidState;
 	std::unique_ptr<RasterizerState> _wireframeState;
-	Camera* _camera = nullptr;
-	DirectionalLight _light;
-	ConstantBuffer<DirectionalLight>* _lightBuffer = nullptr;
-
+	std::shared_ptr<Camera> _camera;
+	std::unique_ptr<DirectionalLight> _directionalLight;
 	std::vector<BaseObject*> baseObjs;
 };
 

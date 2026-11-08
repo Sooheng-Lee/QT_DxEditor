@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Objects\BaseObject.h" />
+    <ClInclude Include="Objects\DirectionalLight.h" />
     <ClInclude Include="Components\Camera.h" />
     <ClInclude Include="DataTypes.h" />
     <ClInclude Include="Graphics\ConstantBuffer.h" />
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Objects\BaseObject.cpp" />
+    <ClCompile Include="Objects\DirectionalLight.cpp" />
     <ClCompile Include="Components\Camera.cpp" />
     <ClCompile Include="Graphics\ConstantBuffer.cpp" />
     <ClCompile Include="Engine.cpp">

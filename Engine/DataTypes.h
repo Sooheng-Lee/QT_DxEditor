@@ -10,7 +10,7 @@ struct TransformData
 	XMMATRIX proj;
 };
 
-struct DirectionalLight
+struct DirectionalLightData
 {
 	XMFLOAT3 direction = { 0.0f, -1.0f, 1.0f };
 	float shiness = 32.0f;

@@ -48,6 +48,9 @@
     <ClInclude Include="Objects\BaseObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Objects\DirectionalLight.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Graphics\BlendState.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -78,6 +81,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\BaseObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\DirectionalLight.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\BlendState.cpp">

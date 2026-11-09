@@ -2,6 +2,12 @@
 #include <QVBoxLayout>
 #include <QMenu>
 #include <QShortcut>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QByteArray>
+#include <QFileInfo>
+#include <exception>
+
 #include "Engine.h"
 HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent)
 {
@@ -52,6 +58,39 @@ void HierarchyWidget::ShowContextMenu(const QPoint& position)
     {
         CreatePrimitive(PrimitiveType::Cylinder);
     });
+
+    createMenu->addAction("Load Asset", this, [this]() {
+        if (!engine)
+            return;
+
+        const QString filePath = QFileDialog::getOpenFileName(
+            this,
+            tr("Load Asset"),
+            QString(),
+            tr("3D Models (*.fbx *.obj);;FBX (*.fbx);;OBJ (*.obj)")
+        );
+
+        if (filePath.isEmpty()) return;
+
+        try
+        {
+            const QByteArray utf8Path = filePath.toUtf8();
+            BaseObject* object = engine->LoadAsset(utf8Path.constData());
+            TreeObjectItem* item = AddObject(QFileInfo(filePath).completeBaseName());
+            item->SetEngineObject(object);
+            tree->setCurrentItem(item);
+            tree->scrollToItem(item);
+        }
+        catch (const std::exception& e)
+        {
+            QMessageBox::critical(
+                this,
+                tr("Load Asset Failed"),
+                QString::fromUtf8(e.what())
+            );
+        }
+    });
+
     QAction* lightAction = createMenu->addAction("Directional Light", this, [this]()
     {
         CreateDirectionalLight();

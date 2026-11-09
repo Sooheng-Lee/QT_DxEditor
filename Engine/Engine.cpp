@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 Engine::Engine(HWND handle, UINT width = 0, UINT height = 0)
 	: _handle(handle), _width(width), _height(height)
@@ -26,6 +27,14 @@ bool Engine::InitEngine()
     _solidState->CreateState(RT_SOLID);
     _wireframeState = std::make_unique<RasterizerState>();
     _wireframeState->CreateState(RT_WIREFRAME);
+    // Display vertex colors until a scene light is added.
+    _previewLight = std::make_unique<ConstantBuffer<DirectionalLightData>>();
+    _previewLight->CreateConstantBuffer(ERenderType::RT_PIXEL, 1);
+    DirectionalLightData preview;
+    preview.ambientColor = XMFLOAT3(1.0f, 1.0f, 1.0f);
+    preview.intensity = 0.0f;
+    preview.specularStrength = 0.0f;
+    _previewLight->Update(preview);
 	return true;
 }
 
@@ -209,6 +218,9 @@ void Engine::Render()
     if (_directionalLight) {
         _directionalLight->Render();
     }
+    else {
+        _previewLight->Render();
+    }
     _wireframeState->Render();
     _alphaState->Render();
 
@@ -235,4 +247,81 @@ void Engine::CameraRotate(float x, float y, float z)
 	rotation.x += x;
 	rotation.y += y;
 	_camera->SetRotation(rotation);
+}
+
+BaseObject* Engine::LoadAsset(const char* filePath)
+{
+    if (!_camera)
+        throw std::runtime_error("The engine is not initialized.");
+
+    const std::vector<MeshData> meshes = ModelLoader::Load(filePath);
+    size_t totalVertices = 0;
+    size_t totalIndices = 0;
+    const size_t maxBufferSize = (std::numeric_limits<UINT>::max)();
+    for (const MeshData& mesh : meshes)
+    {
+        if (mesh.vertices.size() > maxBufferSize / sizeof(VertexDefault) - totalVertices ||
+            mesh.indices.size() > maxBufferSize / sizeof(UINT) - totalIndices)
+            throw std::runtime_error("The asset exceeds the geometry buffer size limit.");
+        totalVertices += mesh.vertices.size();
+        totalIndices += mesh.indices.size();
+    }
+    if (totalVertices == 0 || totalIndices == 0)
+        throw std::runtime_error("The asset contains no renderable triangles.");
+
+    std::vector<VertexDefault> vertices;
+    std::vector<UINT> indices;
+    vertices.reserve(totalVertices);
+    indices.reserve(totalIndices);
+    const float maxValue = (std::numeric_limits<float>::max)();
+    XMFLOAT3 minimum(maxValue, maxValue, maxValue);
+    XMFLOAT3 maximum(-maxValue, -maxValue, -maxValue);
+    for (const MeshData& mesh : meshes)
+    {
+        const UINT vertexOffset = static_cast<UINT>(vertices.size());
+        for (const VertexDefault& vertex : mesh.vertices)
+        {
+            const XMFLOAT3& p = vertex.Position;
+            if (!std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z))
+                throw std::runtime_error("The asset contains invalid vertex positions.");
+            minimum.x = (std::min)(minimum.x, p.x);
+            minimum.y = (std::min)(minimum.y, p.y);
+            minimum.z = (std::min)(minimum.z, p.z);
+            maximum.x = (std::max)(maximum.x, p.x);
+            maximum.y = (std::max)(maximum.y, p.y);
+            maximum.z = (std::max)(maximum.z, p.z);
+        }
+        vertices.insert(vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
+        for (UINT index : mesh.indices)
+        {
+            if (index >= mesh.vertices.size())
+                throw std::runtime_error("The asset contains an invalid mesh index.");
+            indices.push_back(vertexOffset + index);
+        }
+    }
+
+    // Frame the asset without changing its original coordinates or scale.
+    const XMFLOAT3 center(minimum.x * 0.5f + maximum.x * 0.5f,
+        minimum.y * 0.5f + maximum.y * 0.5f, minimum.z * 0.5f + maximum.z * 0.5f);
+    const float radius = (std::max)(0.01f, 0.5f * std::hypot(
+        maximum.x - minimum.x, maximum.y - minimum.y, maximum.z - minimum.z));
+    const float halfFov = XMConvertToRadians(_camera->fov * 0.5f);
+    const float halfHorizontalFov = std::atan(std::tan(halfFov) * _camera->aspectRatio);
+    const float distance = radius * 1.2f / std::sin((std::min)(halfFov, halfHorizontalFov));
+    if (!std::isfinite(distance) || !std::isfinite(distance + radius * 2.0f) ||
+        !std::isfinite(center.z - distance))
+        throw std::runtime_error("The asset bounds exceed the supported coordinate range.");
+
+    auto object = std::make_unique<BaseObject>();
+    object->AddNewObject(vertices, indices);
+    baseObjs.push_back(object.get());
+    _camera->nearZ = (std::min)(_camera->nearZ, radius * 0.01f);
+    _camera->farZ = (std::max)(_camera->farZ, distance + radius * 2.0f);
+    _camera->SetRotation(XMFLOAT3(0.0f, 0.0f, 0.0f));
+    _camera->SetPosition(XMFLOAT3(center.x, center.y, center.z - distance));
+    if (_directionalLight)
+        _directionalLight->SetCameraPos(_camera->GetPosition());
+    object->GetViewProj(_camera.get());
+    object->Update();
+    return object.release();
 }

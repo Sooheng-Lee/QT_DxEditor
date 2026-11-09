@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <wrl/client.h>
 #include <memory>
+#include <stdexcept>
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -20,6 +21,7 @@ using namespace Microsoft::WRL;
 #include "Graphics/BlendState.h"
 #include "Graphics/RasterizerState.h"
 #include "Components/Camera.h"
+#include "Components/ModelLoader.h"
 
 #include "Objects/BaseObject.h"
 #include "Objects/DirectionalLight.h"

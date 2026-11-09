@@ -72,9 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(ProjectDir)LIB\Any;$(ProjectDir)LIB\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)INC;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(ProjectDir)LIB\Any;$(ProjectDir)LIB\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)INC;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,10 +114,12 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>../pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>assimp-vc145-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -126,13 +132,16 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>../pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>assimp-vc145-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Components\ModelLoader.h" />
     <ClInclude Include="Objects\BaseObject.h" />
     <ClInclude Include="Objects\DirectionalLight.h" />
     <ClInclude Include="Components\Camera.h" />
@@ -146,9 +155,11 @@
     <ClInclude Include="Graphics\Shaders.h" />
     <ClInclude Include="Graphics\BlendState.h" />
     <ClInclude Include="Graphics\RasterizerState.h" />
+    <ClInclude Include="Components\StaticMesh.h" />
     <ClInclude Include="VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Components\ModelLoader.cpp" />
     <ClCompile Include="Objects\BaseObject.cpp" />
     <ClCompile Include="Objects\DirectionalLight.cpp" />
     <ClCompile Include="Components\Camera.cpp" />
@@ -170,6 +181,7 @@
     <ClCompile Include="Graphics\Shaders.cpp" />
     <ClCompile Include="Graphics\BlendState.cpp" />
     <ClCompile Include="Graphics\RasterizerState.cpp" />
+    <ClCompile Include="Components\StaticMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\DefaultColor.hlsl">

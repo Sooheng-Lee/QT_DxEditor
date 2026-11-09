@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include "VertexTypes.h"
 
 using namespace DirectX;
 
@@ -22,4 +23,12 @@ struct DirectionalLightData
 
 	XMFLOAT3 ambientColor = { 0.1f, 0.1f, 0.1f };
 	float intensity = 1.0f;
+};
+
+struct MeshData
+{
+	std::vector<VertexDefault> vertices;
+	std::vector<uint32_t> indices;
+
+	unsigned int materialIdx = 0;
 };

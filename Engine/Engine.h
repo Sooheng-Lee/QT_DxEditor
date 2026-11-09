@@ -33,6 +33,8 @@ public:
 	void Render();
 	void CameraMove(float x, float y, float z);
 	void CameraRotate(float x, float y, float z);
+	// Engine owns the returned object. Throws when the asset cannot be loaded.
+	BaseObject* LoadAsset(const char* filePath);
 private:
 	HWND _handle = nullptr;
 	UINT _width = 0;
@@ -43,6 +45,7 @@ private:
 	std::unique_ptr<RasterizerState> _wireframeState;
 	std::shared_ptr<Camera> _camera;
 	std::unique_ptr<DirectionalLight> _directionalLight;
+	std::unique_ptr<ConstantBuffer<DirectionalLightData>> _previewLight;
 	std::vector<BaseObject*> baseObjs;
 };
 

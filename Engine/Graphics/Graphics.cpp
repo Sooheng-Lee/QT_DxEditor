@@ -1,5 +1,6 @@
 #include "../pch.h"
 #include "Graphics.h"
+#include <filesystem>
 
 Graphics* Graphics::_instance = nullptr;
 
@@ -45,17 +46,29 @@ void Graphics::SwapBuffers()
 
 void Graphics::CompileFromFile(const wchar_t* hlslPath, const char* entryPoint, const char* version, ComPtr<ID3DBlob>& blob)
 {
+	// Resolve deployed shaders beside the executable, independently of the working directory.
+	wchar_t executablePath[32768];
+	const DWORD length = GetModuleFileNameW(nullptr, executablePath, ARRAYSIZE(executablePath));
+	if (length == 0 || length >= ARRAYSIZE(executablePath))
+		throw std::runtime_error("Failed to locate the executable directory for shader loading.");
+	const auto shaderPath = std::filesystem::path(executablePath).parent_path() / hlslPath;
 	ComPtr<ID3DBlob> errBlob = nullptr;
 	UINT flag = 0;
 #ifdef _DEBUG
 	flag = D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG;
 #endif
-	HRESULT hr = D3DCompileFromFile(hlslPath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, version, flag, D3DCOMPILE_IEEE_STRICTNESS, blob.ReleaseAndGetAddressOf(), errBlob.GetAddressOf());
+	HRESULT hr = D3DCompileFromFile(shaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, version, flag, 0, blob.ReleaseAndGetAddressOf(), errBlob.GetAddressOf());
 	if (errBlob)
 	{
 		OutputDebugStringA(static_cast<const char*>(errBlob->GetBufferPointer()));
 	}
-	CHECK(SUCCEEDED(hr));
+	if (FAILED(hr))
+	{
+		std::string message = "Failed to compile shader: " + shaderPath.u8string();
+		if (errBlob)
+			message += "\n" + std::string(static_cast<const char*>(errBlob->GetBufferPointer()), errBlob->GetBufferSize());
+		throw std::runtime_error(message);
+	}
 }
 
 void Graphics::CreateDeviceAndSwapChain(const HWND& handle, const UINT& width, const UINT& height)

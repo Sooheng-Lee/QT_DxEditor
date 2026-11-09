@@ -36,8 +36,8 @@ void BaseObject::AddNewObject(std::vector<VertexDefault> vertices, std::vector<U
 	vertexShader->CreateVertexBuffer(vertices);
 	vertexShader->CreateIndexBuffer(indices);
 	transformBuffer->CreateConstantBuffer(ERenderType::RT_VERTEX, 0);
-	vertexShader->CreateShader(L"..\\Engine\\HLSL\\DefaultColor.hlsl");
-	pixelShader->CreateShader(L"..\\Engine\\HLSL\\DefaultColor.hlsl");
+	vertexShader->CreateShader(L"HLSL\\DefaultColor.hlsl");
+	pixelShader->CreateShader(L"HLSL\\DefaultColor.hlsl");
 }
 
 void BaseObject::AddNewObject(const std::vector<MeshData>& meshes)

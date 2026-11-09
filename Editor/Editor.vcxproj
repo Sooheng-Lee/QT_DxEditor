@@ -70,6 +70,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <QtInstallDir Condition="'$(QtInstallDir)'==''">C:\Qt\6.12.0\msvc2022_64</QtInstallDir>
+    <QtDeployConfiguration Condition="'$(Configuration)'=='Debug'">--debug</QtDeployConfiguration>
+    <QtDeployConfiguration Condition="'$(Configuration)'!='Debug'">--release</QtDeployConfiguration>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)..\;$(ProjectDir)INC\;$(SolutionDir)Engine;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\Engine\bin\$(Platform)\$(Configuration)\;C:\Qt\6.12.0\msvc2022_64\lib;$(ProjectDir)LIB\Any\;$(ProjectDir)LIB\Debug\;$(LibraryPath)</LibraryPath>
@@ -174,6 +179,14 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="CopyEngineRuntime" AfterTargets="Build" Condition="'$(Platform)'=='x64'">
     <Copy SourceFiles="$(ProjectDir)..\Engine\bin\$(Platform)\$(Configuration)\Engine.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <RuntimeShader Include="$(ProjectDir)..\Engine\HLSL\**\*.hlsl" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RuntimeShader)" DestinationFiles="@(RuntimeShader->'$(OutDir)HLSL\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="DeployQtRuntime" AfterTargets="CopyEngineRuntime" Condition="'$(Platform)'=='x64'">
+    <Error Condition="!Exists('$(QtInstallDir)\bin\windeployqt.exe')" Text="Qt deployment tool was not found. Set QtInstallDir to the installed MSVC x64 Qt directory." />
+    <Exec Command="&quot;$(QtInstallDir)\bin\windeployqt.exe&quot; $(QtDeployConfiguration) --no-translations --dir &quot;$(TargetDir).&quot; &quot;$(TargetPath)&quot;" />
   </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

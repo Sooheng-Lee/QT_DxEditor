@@ -73,7 +73,16 @@ TreeObjectItem* ModelCreateMenu::CreatePrimitive(PrimitiveType type)
     if (!hierarchy->engine)
         return nullptr;
 
-    BaseObject* object = hierarchy->engine->CreatePrimitive(type);
+    BaseObject* object = nullptr;
+    try
+    {
+        object = hierarchy->engine->CreatePrimitive(type);
+    }
+    catch (const std::exception& e)
+    {
+        QMessageBox::critical(this, tr("Create Model Failed"), QString::fromUtf8(e.what()));
+        return nullptr;
+    }
     if (!object)
         return nullptr;
 

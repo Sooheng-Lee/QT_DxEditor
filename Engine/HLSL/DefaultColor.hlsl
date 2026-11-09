@@ -16,6 +16,17 @@ cbuffer cbDirectionalLight : register(b1)
     float intensity;
 };
 
+Texture2D diffuseTexture : register(t0);
+SamplerState diffuseSampler : register(s0);
+
+cbuffer cbMaterial : register(b2)
+{
+    float4 materialDiffuse;
+    float4 materialSpecular;
+    float materialShininess;
+    float3 materialPadding;
+};
+
 struct VertexIn
 {
     float3 position : POSITION;
@@ -56,9 +67,10 @@ float4 PS(VertexOut input) : SV_TARGET
     
     float3 vertical = normalize(cameraPos - input.worldPosition.xyz);
     float3 horizontal = normalize(light + vertical);
-    float specularIntensity = pow(saturate(dot(norm, horizontal)), shininess);
-    float3 specular = color.rgb * specularIntensity * specularStrength * intensity;
+    float specularIntensity = pow(saturate(dot(norm, horizontal)), max(materialShininess, 1.0f));
+    float3 specular = materialSpecular.rgb * color.rgb * specularIntensity * specularStrength * intensity;
     
-    float4 outputCol = float4(input.color.rgb * (ambient + diffuse) + specular, input.color.a);
+    float4 albedo = input.color * materialDiffuse * diffuseTexture.Sample(diffuseSampler, input.uv);
+    float4 outputCol = float4(albedo.rgb * (ambient + diffuse) + specular, albedo.a);
     return outputCol;
 }

@@ -21,3 +21,6 @@ bin/
 /Engine/x64/Release/
 /Engine/Engine/x64/Debug/
 /Engine/Engine/x64/Release/
+
+# Restored NuGet packages
+/packages/

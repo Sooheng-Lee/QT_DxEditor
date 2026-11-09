@@ -121,6 +121,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Qt6Cored.lib;Qt6Guid.lib;Qt6Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(TargetDir)assimp-vc145-mt.dll" (
+    copy /Y "$(ProjectDir)assimp-vc145-mt.dll" "$(TargetDir)assimp-vc145-mt.dll"
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -139,16 +144,23 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Qt6Core.lib;Qt6Gui.lib;Qt6Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(TargetDir)assimp-vc145-mt.dll" (
+    copy /Y "$(ProjectDir)assimp-vc145-mt.dll" "$(TargetDir)assimp-vc145-mt.dll"
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Widgets\TreeObjectItem.cpp" />
     <ClCompile Include="Widgets\HierarchyWidget.cpp" />
     <ClCompile Include="Widgets\DetailsWidget.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Widgets\CreateMenu.cpp" />
     <ClCompile Include="Widgets\ViewportWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataTypes.h" />
+    <ClInclude Include="Widgets\CreateMenu.h" />
     <ClInclude Include="Widgets\TreeObjectItem.h" />
     <ClInclude Include="Widgets\HierarchyWidget.h" />
     <ClInclude Include="Widgets\DetailsWidget.h" />

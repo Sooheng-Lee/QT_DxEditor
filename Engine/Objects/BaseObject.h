@@ -4,7 +4,8 @@ class BaseObject
 public:
 	BaseObject();
 	~BaseObject();
-	void AddNewObject(std::vector<VertexDefault> vertices, std::vector<UINT> indices);
+	void AddNewObject(std::vector<VertexDefault> vertices, std::vector<UINT> indices, const MaterialData& material = MaterialData{});
+	void AddNewObject(const std::vector<MeshData>& meshes);
 	void GetViewProj(const Camera* camera);
 	virtual void Update();
 	void Render();
@@ -20,6 +21,8 @@ private:
 protected:
 	std::unique_ptr<VertexShader<VertexDefault>> vertexShader;
 	std::unique_ptr<PixelShader> pixelShader;
+	std::unique_ptr<ShaderResourceView> diffuseTexture;
+	std::unique_ptr<ConstantBuffer<CBMaterial>> materialBuffer;
 	TransformData transformData;
 	std::unique_ptr<ConstantBuffer<TransformData>> transformBuffer;
 	std::vector<std::unique_ptr<BaseObject>> subObjects;

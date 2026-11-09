@@ -7,6 +7,7 @@
 #include "Widgets/ViewportWidget.h"
 #include "Widgets/DetailsWidget.h"
 #include "Widgets/HierarchyWidget.h"
+#include "Widgets/CreateMenu.h"
 #include "Engine.h"
 
 #pragma comment(lib, "Engine.lib")
@@ -18,6 +19,7 @@ int main(int argc, char** argv)
     window.setWindowTitle("DxEditor");
     window.resize(1400, 800);
     window.setDockNestingEnabled(true);
+    QMenu* fileMenu = window.menuBar()->addMenu("File");
     QMenu* viewMenu = window.menuBar()->addMenu("View");
 
     // Keep the native DirectX surface separate from the dock's title bar.
@@ -54,6 +56,15 @@ int main(int argc, char** argv)
         return 1;
     viewport->SetEngine(&engine);
     hierarchy->SetEngine(&engine);
+    window.menuBar()->addMenu(new ModelCreateMenu("Model", hierarchy, &window));
+    QAction* newAction = fileMenu->addAction("New", &window, [hierarchy, details, viewport]()
+    {
+        details->SetObject(nullptr);
+        hierarchy->ClearScene();
+        viewport->ResetMousePosition();
+    });
+    newAction->setShortcut(QKeySequence::New);
+    fileMenu->addAction("Exit", &window, &QWidget::close);
     auto refreshDetails = [hierarchy, details, &engine]()
     {
         TreeObjectItem* item = hierarchy->GetSelectedObject();

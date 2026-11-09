@@ -142,9 +142,9 @@ void Engine::RemoveDirectionalLight()
         return;
 
     // D3D retains bound buffers; clear the light slot before releasing the light.
-    //ID3D11Buffer* emptyBuffer = nullptr;
-    //Graphics::GetInstance()->GetContext()->PSSetConstantBuffers(1, 1, &emptyBuffer);
-    //_directionalLight.reset();
+    ID3D11Buffer* emptyBuffer = nullptr;
+    Graphics::GetInstance()->GetContext()->PSSetConstantBuffers(1, 1, &emptyBuffer);
+    _directionalLight.reset();
 }
 
 bool Engine::GetDirectionalLightData(DirectionalLightData& data) const
@@ -269,16 +269,11 @@ BaseObject* Engine::LoadAsset(const char* filePath)
     if (totalVertices == 0 || totalIndices == 0)
         throw std::runtime_error("The asset contains no renderable triangles.");
 
-    std::vector<VertexDefault> vertices;
-    std::vector<UINT> indices;
-    vertices.reserve(totalVertices);
-    indices.reserve(totalIndices);
     const float maxValue = (std::numeric_limits<float>::max)();
     XMFLOAT3 minimum(maxValue, maxValue, maxValue);
     XMFLOAT3 maximum(-maxValue, -maxValue, -maxValue);
     for (const MeshData& mesh : meshes)
     {
-        const UINT vertexOffset = static_cast<UINT>(vertices.size());
         for (const VertexDefault& vertex : mesh.vertices)
         {
             const XMFLOAT3& p = vertex.Position;
@@ -291,12 +286,10 @@ BaseObject* Engine::LoadAsset(const char* filePath)
             maximum.y = (std::max)(maximum.y, p.y);
             maximum.z = (std::max)(maximum.z, p.z);
         }
-        vertices.insert(vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
         for (UINT index : mesh.indices)
         {
             if (index >= mesh.vertices.size())
                 throw std::runtime_error("The asset contains an invalid mesh index.");
-            indices.push_back(vertexOffset + index);
         }
     }
 
@@ -313,7 +306,7 @@ BaseObject* Engine::LoadAsset(const char* filePath)
         throw std::runtime_error("The asset bounds exceed the supported coordinate range.");
 
     auto object = std::make_unique<BaseObject>();
-    object->AddNewObject(vertices, indices);
+    object->AddNewObject(meshes);
     baseObjs.push_back(object.get());
     _camera->nearZ = (std::min)(_camera->nearZ, radius * 0.01f);
     _camera->farZ = (std::max)(_camera->farZ, distance + radius * 2.0f);
@@ -324,4 +317,14 @@ BaseObject* Engine::LoadAsset(const char* filePath)
     object->GetViewProj(_camera.get());
     object->Update();
     return object.release();
+}
+
+void Engine::ResetScene()
+{
+    for (BaseObject* object : baseObjs)
+        delete object;
+    baseObjs.clear();
+    RemoveDirectionalLight();
+    if (_camera)
+        _camera = std::make_shared<Camera>(90.0f, static_cast<float>(_width) / _height);
 }

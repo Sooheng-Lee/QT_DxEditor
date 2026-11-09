@@ -1,5 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
+#include <cstdint>
+#include <string>
+#include <vector>
 #include "VertexTypes.h"
 
 using namespace DirectX;
@@ -25,10 +28,27 @@ struct DirectionalLightData
 	float intensity = 1.0f;
 };
 
+struct MaterialData
+{
+	XMFLOAT4 diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	XMFLOAT4 specularColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float shininess = 32.0f;
+
+	std::string diffuseTexPath;
+};
+
 struct MeshData
 {
 	std::vector<VertexDefault> vertices;
 	std::vector<uint32_t> indices;
-
 	unsigned int materialIdx = 0;
+	MaterialData material;
+};
+
+struct CBMaterial
+{
+	XMFLOAT4 DiffuseColor;
+	XMFLOAT4 SpecularColor;
+	float Shininess;
+	float Padding[3];
 };

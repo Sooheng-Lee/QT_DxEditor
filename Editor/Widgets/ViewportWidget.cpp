@@ -50,3 +50,9 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent* event)
 	prevPos = currentPos;
 	hasPrevPos = true;
 }
+
+void ViewportWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+	hasPrevPos = false;
+	QWidget::mouseReleaseEvent(event);
+}

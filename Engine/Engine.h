@@ -19,6 +19,7 @@ public:
 	Engine(HWND handle, UINT width, UINT height);
 	~Engine();
 	bool InitEngine();
+	void ResetScene();
 	// Engine owns the returned object until removal or engine destruction.
 	BaseObject* CreatePrimitive(PrimitiveType type);
 	bool RemoveObject(BaseObject* object);

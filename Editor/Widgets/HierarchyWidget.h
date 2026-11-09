@@ -11,8 +11,7 @@ public:
 	HierarchyWidget(QWidget* parent = nullptr);
 
 	void SetEngine(Engine* value) { engine = value; }
-	TreeObjectItem* CreatePrimitive(PrimitiveType type);
-	TreeObjectItem* CreateDirectionalLight();
+	void ClearScene();
 	bool IsDirectionalLight(const TreeObjectItem* item) const { return item && item == directionalLightItem; }
 
 	TreeObjectItem* AddObject(const QString& name, TreeObjectItem* parent = nullptr);
@@ -21,6 +20,7 @@ public:
 	QItemSelectionModel* GetSelectionModel() const { return tree->selectionModel(); }
 
 private:
+	friend class ModelCreateMenu;
 	void ShowContextMenu(const QPoint& position);
 	Engine* engine = nullptr;
 	QTreeWidget* tree = nullptr;

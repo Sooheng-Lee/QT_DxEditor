@@ -63,6 +63,9 @@
     <ClInclude Include="Components\ModelLoader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\ShaderResourceView.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -102,6 +105,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Components\ModelLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\ShaderResourceView.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

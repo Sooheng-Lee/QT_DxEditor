@@ -1,12 +1,8 @@
 #include "HierarchyWidget.h"
+#include "CreateMenu.h"
 #include <QVBoxLayout>
 #include <QMenu>
 #include <QShortcut>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QByteArray>
-#include <QFileInfo>
-#include <exception>
 
 #include "Engine.h"
 HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent)
@@ -44,58 +40,7 @@ void HierarchyWidget::ShowContextMenu(const QPoint& position)
     TreeObjectItem* selectedItem = tree->selectedItems().isEmpty()
         ? nullptr : GetSelectedObject();
     QMenu menu(this);
-    QMenu* createMenu = menu.addMenu("Create");
-    createMenu->setEnabled(engine != nullptr);
-    createMenu->addAction("Cube", this, [this]()
-    {
-        CreatePrimitive(PrimitiveType::Cube);
-    });
-    createMenu->addAction("Sphere", this, [this]()
-    {
-        CreatePrimitive(PrimitiveType::Sphere);
-    });
-    createMenu->addAction("Cylinder", this, [this]()
-    {
-        CreatePrimitive(PrimitiveType::Cylinder);
-    });
-
-    createMenu->addAction("Load Asset", this, [this]() {
-        if (!engine)
-            return;
-
-        const QString filePath = QFileDialog::getOpenFileName(
-            this,
-            tr("Load Asset"),
-            QString(),
-            tr("3D Models (*.fbx *.obj);;FBX (*.fbx);;OBJ (*.obj)")
-        );
-
-        if (filePath.isEmpty()) return;
-
-        try
-        {
-            const QByteArray utf8Path = filePath.toUtf8();
-            BaseObject* object = engine->LoadAsset(utf8Path.constData());
-            TreeObjectItem* item = AddObject(QFileInfo(filePath).completeBaseName());
-            item->SetEngineObject(object);
-            tree->setCurrentItem(item);
-            tree->scrollToItem(item);
-        }
-        catch (const std::exception& e)
-        {
-            QMessageBox::critical(
-                this,
-                tr("Load Asset Failed"),
-                QString::fromUtf8(e.what())
-            );
-        }
-    });
-
-    QAction* lightAction = createMenu->addAction("Directional Light", this, [this]()
-    {
-        CreateDirectionalLight();
-    });
-    lightAction->setEnabled(engine && !engine->HasDirectionalLight() && !directionalLightItem);
+    menu.addMenu(new ModelCreateMenu("Create", this, &menu));
     if (selectedItem)
     {
         QAction* deleteAction = menu.addAction("Delete", this, [this, selectedItem]()
@@ -105,42 +50,6 @@ void HierarchyWidget::ShowContextMenu(const QPoint& position)
         deleteAction->setEnabled(engine != nullptr);
     }
     menu.exec(tree->viewport()->mapToGlobal(position));
-}
-
-TreeObjectItem* HierarchyWidget::CreatePrimitive(PrimitiveType type)
-{
-    if (!engine)
-        return nullptr;
-
-    BaseObject* object = engine->CreatePrimitive(type);
-    if (!object)
-        return nullptr;
-
-    QString name;
-    switch (type)
-    {
-    case PrimitiveType::Cube: name = "Cube"; break;
-    case PrimitiveType::Sphere: name = "Sphere"; break;
-    case PrimitiveType::Cylinder: name = "Cylinder"; break;
-    default: name = "Object"; break;
-    }
-    // The engine stores a flat scene, so new objects are root items.
-    TreeObjectItem* item = AddObject(name);
-    item->SetEngineObject(object);
-    tree->setCurrentItem(item);
-    tree->scrollToItem(item);
-    return item;
-}
-
-TreeObjectItem* HierarchyWidget::CreateDirectionalLight()
-{
-    if (!engine || directionalLightItem || !engine->CreateDirectionalLight())
-        return nullptr;
-
-    directionalLightItem = AddObject("Directional Light");
-    tree->setCurrentItem(directionalLightItem);
-    tree->scrollToItem(directionalLightItem);
-    return directionalLightItem;
 }
 
 TreeObjectItem* HierarchyWidget::AddObject(const QString& name, TreeObjectItem* parent)
@@ -180,4 +89,14 @@ TreeObjectItem* HierarchyWidget::GetSelectedObject() const
 	const auto selectedItems = tree->selectedItems();
 	return selectedItems.isEmpty() ? nullptr
 		: static_cast<TreeObjectItem*>(selectedItems.first());
+}
+
+void HierarchyWidget::ClearScene()
+{
+    if (!engine) return;
+    tree->clearSelection();
+    tree->setCurrentItem(nullptr);
+    directionalLightItem = nullptr;
+    tree->clear();
+    engine->ResetScene();
 }

@@ -13,9 +13,11 @@ public:
 	void SetEngine(Engine* engine) {
 		this->engine = engine;
 	};
+	void ResetMousePosition() { hasPrevPos = false; }
 protected:
 	void keyPressEvent(QKeyEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
 	Engine* engine = nullptr;
